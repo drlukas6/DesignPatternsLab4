@@ -25,6 +25,8 @@ public class LSDrawingBoard extends JFrame implements DocumentModelListener {
     public LSDrawingBoard(DocumentModel documentModel) throws HeadlessException {
         this.documentModel = documentModel;
 
+        setAutoRequestFocus(true);
+
         setLayout(new BorderLayout());
         setupMenubar();
 
@@ -44,12 +46,16 @@ public class LSDrawingBoard extends JFrame implements DocumentModelListener {
         JButton svgExportButton = new JButton("Export SVG");
         JButton lineButton = new JButton("Line");
         lineButton.addActionListener(l -> {
+            state.onLeaving();
             this.state = new AddShapeState(new LineSegment(), documentModel);
+            this.requestFocus();
         });
 
         JButton ovalButton = new JButton("Oval");
         ovalButton.addActionListener(l -> {
+            state.onLeaving();
             this.state = new AddShapeState(new Oval(), documentModel);
+            this.requestFocus();
         });
         JButton selectButton = new JButton("Select");
         JButton eraserButton = new JButton("Eraser");
