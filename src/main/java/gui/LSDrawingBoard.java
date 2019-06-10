@@ -1,10 +1,15 @@
 package gui;
 
+import com.sun.tools.internal.xjc.ModelLoader;
 import graphics.Point;
 import graphics.drawing.DocumentModel;
+import graphics.graphicalObjects.LineSegment;
+import graphics.graphicalObjects.Oval;
 import graphics.graphicalObjects.abstracts.GraphicalObject;
+import graphics.listeners.DocumentModelListener;
 import graphics.renderer.G2DRendererImpl;
 import graphics.renderer.Renderer;
+import state.AddShapeState;
 import state.IdleState;
 import state.State;
 
@@ -12,13 +17,57 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class LSDrawingBoard extends JFrame {
+public class LSDrawingBoard extends JFrame implements DocumentModelListener {
     private DocumentModel documentModel;
 
     private State state = new IdleState();
 
     public LSDrawingBoard(DocumentModel documentModel) throws HeadlessException {
         this.documentModel = documentModel;
+
+        setLayout(new BorderLayout());
+        setupMenubar();
+
+        documentModel.addDocumentModelListener(this);
+        this.addMouseListener(new LSDrawingBoardMouseListener());
+        this.addMouseMotionListener(new LSDrawingBoardMouseMotionListener());
+        this.addKeyListener(new LSDrawingBoardKeyListener());
+
+        this.setFocusable(true);
+    }
+
+    private void setupMenubar() {
+        JToolBar toolBar = new JToolBar("Tool bar");
+
+        JButton loadButton = new JButton("Load");
+        JButton saveButton = new JButton("Save");
+        JButton svgExportButton = new JButton("Export SVG");
+        JButton lineButton = new JButton("Line");
+        lineButton.addActionListener(l -> {
+            this.state = new AddShapeState(new LineSegment(), documentModel);
+        });
+
+        JButton ovalButton = new JButton("Oval");
+        ovalButton.addActionListener(l -> {
+            this.state = new AddShapeState(new Oval(), documentModel);
+        });
+        JButton selectButton = new JButton("Select");
+        JButton eraserButton = new JButton("Eraser");
+
+        toolBar.add(loadButton);
+        toolBar.add(saveButton);
+        toolBar.add(svgExportButton);
+        toolBar.add(lineButton);
+        toolBar.add(ovalButton);
+        toolBar.add(selectButton);
+        toolBar.add(eraserButton);
+
+        add(toolBar, BorderLayout.NORTH);
+    }
+
+    @Override
+    public void documentChange() {
+        repaint();
     }
 
     @Override
@@ -34,7 +83,6 @@ public class LSDrawingBoard extends JFrame {
 
         state.afterDraw(renderer);
     }
-
 
     private class LSDrawingBoardKeyListener implements KeyListener {
 
