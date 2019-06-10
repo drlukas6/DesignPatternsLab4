@@ -74,6 +74,8 @@ public class DocumentModel {
         } else {
             selectedObjects.add(obj);
         }
+
+        notifyListeners();
     }
 
     // Uklanjanje objekta iz dokumenta (pazite je li već selektiran; odregistrirajte model kao promatrača)
@@ -84,6 +86,8 @@ public class DocumentModel {
         } else {
             selectedObjects.remove(obj);
         }
+
+        notifyListeners();
     }
 
     // Vrati nepromjenjivu listu postojećih objekata (izmjene smiju ići samo kroz metode modela)
@@ -109,7 +113,7 @@ public class DocumentModel {
     }
 
     // Vrati nepromjenjivu listu selektiranih objekata
-    public List getSelectedObjects() {
+    public List<GraphicalObject> getSelectedObjects() {
         return roSelectedObjects;
     }
 
@@ -176,7 +180,7 @@ public class DocumentModel {
         double minDistance = SELECTION_PROXIMITY;
 
         for(int i = 0; i < object.getNumberOfHotPoints(); ++i) {
-            double distance = object.getHotPointDistance(0, mousePoint);
+            double distance = object.getHotPointDistance(i, mousePoint);
             if (distance < minDistance) {
                 minDistance = distance;
                 result = i;
@@ -184,6 +188,22 @@ public class DocumentModel {
         }
 
         return result;
+    }
+
+    public void changeSelectionForObject(GraphicalObject object) {
+        removeGraphicalObject(object);
+        object.setSelected(!object.isSelected());
+        addGraphicalObject(object);
+    }
+
+    public void clearSelectedObjects() {
+        while (selectedObjects.size() > 0) {
+            GraphicalObject object = selectedObjects.remove(0);
+            object.setSelected(false);
+            objects.add(object);
+        }
+
+        notifyListeners();
     }
 
 }

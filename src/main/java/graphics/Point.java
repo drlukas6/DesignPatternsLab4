@@ -25,6 +25,14 @@ public class Point implements Comparable<Point> {
         return new Point(Math.abs(this.x - p.x), Math.abs(this.y - p.y));
     }
 
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
     @Override
     public int compareTo(Point o) {
         if (this.getX() == o.getX()) {

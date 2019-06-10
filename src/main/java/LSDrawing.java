@@ -10,7 +10,7 @@ public class LSDrawing {
     public static void main(String[] args) {
         DocumentModel documentModel = new DocumentModel();
         documentModel.addGraphicalObject(new Oval(new Point(100, 150), new Point(150, 100)));
-        documentModel.addGraphicalObject(new LineSegment(new Point(50, 50), new Point(300, 300)));
+        documentModel.addGraphicalObject(new LineSegment(new Point(200, 50), new Point(300, 300)));
 
         LSDrawingBoard gui = new LSDrawingBoard(documentModel);
         gui.setTitle("LS Drawing Board");

@@ -19,16 +19,6 @@ public class GeometryUtil {
 
         double distance = crossProduct(s, e, p) / distanceFromPoint(s, e);
 
-        double dot1 = dotProduct(s, e, p);
-        if (dot1 > 0) {
-            return distanceFromPoint(e, p);
-        }
-
-        double dot2 = dotProduct(e, s, p);
-        if (dot2 > 0) {
-            return distanceFromPoint(s, p);
-        }
-
         return Math.abs(distance);
     }
 

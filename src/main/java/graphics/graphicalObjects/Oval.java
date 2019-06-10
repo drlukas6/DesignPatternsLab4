@@ -5,6 +5,7 @@ import graphics.Rectangle;
 import graphics.renderer.Renderer;
 import graphics.graphicalObjects.abstracts.AbstractGraphicalObject;
 import graphics.graphicalObjects.abstracts.GraphicalObject;
+import org.w3c.dom.css.Rect;
 
 import java.util.List;
 import java.util.Stack;
@@ -17,7 +18,7 @@ public class Oval extends AbstractGraphicalObject {
     }
 
     public Oval() {
-        super(new Point[] {new Point(10, 0 ), new Point(0, 10)});
+        super(new Point[] {new Point(20, 0 ), new Point(0, 20)});
     }
 
     @Override
@@ -80,6 +81,12 @@ public class Oval extends AbstractGraphicalObject {
     public void render(Renderer r) {
         Rectangle rec = getBoundingBox();
         r.fillOval(new Point(rec.getX(), rec.getY()), rec.getWidth(), rec.getHeight());
-        r.drawRect(rec);
+
+        if (isSelected()) {
+            r.drawRect(rec);
+            for(Point hotPoint: getHotPoints()) {
+                r.drawRect(new Rectangle(hotPoint.getX() - 3, hotPoint.getY() - 3, 6, 6));
+            }
+        }
     }
 }

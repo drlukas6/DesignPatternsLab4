@@ -37,12 +37,12 @@ public class LineSegment extends AbstractGraphicalObject {
         int smallerY = startPoint.getY() < endPoint.getY() ? startPoint.getY() : endPoint.getY();
 
         Point rectangleStartPoint = new Point(startPoint.getX(), smallerY);
-
-        return new Rectangle(
+        Rectangle rec = new Rectangle(
                 rectangleStartPoint.getX(),
-                rectangleStartPoint.getX(),
+                rectangleStartPoint.getY(),
                 rectangleStartPoint.difference(endPoint).getX(),
                 rectangleStartPoint.difference(endPoint).getY());
+        return rec;
     }
 
     @Override
@@ -77,6 +77,14 @@ public class LineSegment extends AbstractGraphicalObject {
 
     @Override
     public void render(Renderer r) {
+        Rectangle rec = getBoundingBox();
         r.drawLine(getHotPoint(0), getHotPoint(1));
+
+        if (isSelected()) {
+            r.drawRect(rec);
+            for(Point hotPoint: getHotPoints()) {
+                r.drawRect(new Rectangle(hotPoint.getX() - 3, hotPoint.getY() - 3, 6, 6));
+            }
+        }
     }
 }

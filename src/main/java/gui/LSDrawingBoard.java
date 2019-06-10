@@ -11,6 +11,7 @@ import graphics.renderer.G2DRendererImpl;
 import graphics.renderer.Renderer;
 import state.AddShapeState;
 import state.IdleState;
+import state.SelectShapeState;
 import state.State;
 
 import javax.swing.*;
@@ -57,7 +58,14 @@ public class LSDrawingBoard extends JFrame implements DocumentModelListener {
             this.state = new AddShapeState(new Oval(), documentModel);
             this.requestFocus();
         });
+
         JButton selectButton = new JButton("Select");
+        selectButton.addActionListener(l -> {
+            state.onLeaving();
+            this.state = new SelectShapeState(documentModel);
+            this.requestFocus();
+        });
+
         JButton eraserButton = new JButton("Eraser");
 
         toolBar.add(loadButton);
