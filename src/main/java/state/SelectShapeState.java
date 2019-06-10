@@ -4,7 +4,10 @@ import graphics.Point;
 import graphics.drawing.DocumentModel;
 import graphics.graphicalObjects.abstracts.GraphicalObject;
 import graphics.renderer.Renderer;
+import javafx.scene.input.KeyCode;
 
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.List;
 
 public class SelectShapeState implements State{
@@ -67,6 +70,49 @@ public class SelectShapeState implements State{
     @Override
     public void keyPressed(int keyCode) {
 
+        int deltaX = 0;
+        int deltaY = 0;
+
+        switch (keyCode) {
+            case KeyEvent.VK_LEFT:
+                deltaX = -2;
+                break;
+            case KeyEvent.VK_UP:
+                deltaY = -2;
+                break;
+            case KeyEvent.VK_RIGHT:
+                deltaX = 2;
+                break;
+            case KeyEvent.VK_DOWN:
+                deltaY = 2;
+                break;
+            case KeyEvent.VK_PLUS:
+            case KeyEvent.VK_MINUS:
+                handleStackMovement();
+                return;
+            default:
+                break;
+        }
+
+        for(GraphicalObject object: documentModel.getSelectedObjects()) {
+            for(int i = 0; i < object.getNumberOfHotPoints(); ++i) {
+                Point pnt = object.getHotPoint(i);
+                pnt.setX(pnt.getX() + deltaX);
+                pnt.setY(pnt.getY() + deltaY);
+            }
+        }
+
+        documentModel.notifyListeners();
+    }
+
+    private void handleStackMovement() {
+        if (documentModel.getSelectedObjects().size() < 0 || documentModel.getSelectedObjects().size() > 1) {
+            return;
+        }
+
+        GraphicalObject selectedObject = documentModel.getSelectedObjects().get(0);
+
+        documentModel.increaseZ(selectedObject);
     }
 
     @Override

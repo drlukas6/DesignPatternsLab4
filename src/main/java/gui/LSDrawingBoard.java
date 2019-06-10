@@ -37,6 +37,8 @@ public class LSDrawingBoard extends JFrame implements DocumentModelListener {
         this.addKeyListener(new LSDrawingBoardKeyListener());
 
         this.setFocusable(true);
+
+
     }
 
     private void setupMenubar() {
