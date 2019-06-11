@@ -2,12 +2,14 @@ package state;
 
 import graphics.Point;
 import graphics.drawing.DocumentModel;
+import graphics.graphicalObjects.CompositeObject;
 import graphics.graphicalObjects.abstracts.GraphicalObject;
 import graphics.renderer.Renderer;
 import javafx.scene.input.KeyCode;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.LinkedList;
 import java.util.List;
 
 public class SelectShapeState implements State{
@@ -86,33 +88,54 @@ public class SelectShapeState implements State{
             case KeyEvent.VK_DOWN:
                 deltaY = 2;
                 break;
-            case KeyEvent.VK_PLUS:
-            case KeyEvent.VK_MINUS:
-                handleStackMovement();
+            case 61:
+                handleStackMovement(true);
+                return;
+            case 47:
+                handleStackMovement(false);
+                return;
+            case KeyEvent.VK_G:
+                List<GraphicalObject> selectedObjects = new LinkedList<>(documentModel.getSelectedObjects());
+
+                for (GraphicalObject object: selectedObjects) {
+                    documentModel.removeGraphicalObject(object);
+                }
+
+                GraphicalObject composite = new CompositeObject(selectedObjects);
+                composite.setSelected(true);
+                documentModel.addGraphicalObject(composite);
+
+                documentModel.notifyListeners();
+
                 return;
             default:
                 break;
         }
 
-        for(GraphicalObject object: documentModel.getSelectedObjects()) {
-            for(int i = 0; i < object.getNumberOfHotPoints(); ++i) {
-                Point pnt = object.getHotPoint(i);
-                pnt.setX(pnt.getX() + deltaX);
-                pnt.setY(pnt.getY() + deltaY);
+        if (deltaX != 0 || deltaY != 0) {
+            for(GraphicalObject object: documentModel.getSelectedObjects()) {
+                for(int i = 0; i < object.getNumberOfHotPoints(); ++i) {
+                    object.translate(new Point(deltaX, deltaY));
+                }
             }
+            documentModel.notifyListeners();
         }
-
-        documentModel.notifyListeners();
     }
 
-    private void handleStackMovement() {
+    private void handleStackMovement(boolean increase) {
         if (documentModel.getSelectedObjects().size() < 0 || documentModel.getSelectedObjects().size() > 1) {
             return;
         }
 
         GraphicalObject selectedObject = documentModel.getSelectedObjects().get(0);
 
-        documentModel.increaseZ(selectedObject);
+        if (increase) {
+            documentModel.increaseZ(selectedObject);
+        } else {
+            documentModel.decreaseZ(selectedObject);
+        }
+
+        documentModel.notifyListeners();
     }
 
     @Override

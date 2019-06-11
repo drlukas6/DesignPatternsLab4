@@ -69,11 +69,18 @@ public class DocumentModel {
     // Dodavanje objekta u dokument (pazite je li već selektiran; registrirajte model kao promatrača)
     public void addGraphicalObject(GraphicalObject obj) {
         obj.addGraphicalObjectListener(goListener);
-        if(!obj.isSelected()) {
-            objects.add(obj);
-        } else {
+
+        objects.add(obj);
+
+        if (obj.isSelected()) {
             selectedObjects.add(obj);
         }
+
+//        if(!obj.isSelected()) {
+//            objects.add(obj);
+//        } else {
+//            selectedObjects.add(obj);
+//        }
 
         notifyListeners();
     }
@@ -81,9 +88,10 @@ public class DocumentModel {
     // Uklanjanje objekta iz dokumenta (pazite je li već selektiran; odregistrirajte model kao promatrača)
     public void removeGraphicalObject(GraphicalObject obj) {
         obj.removeGraphicalObjectListener(goListener);
-        if(!obj.isSelected()) {
-            objects.remove(obj);
-        } else {
+
+        objects.remove(obj);
+
+        if(obj.isSelected()) {
             selectedObjects.remove(obj);
         }
 
