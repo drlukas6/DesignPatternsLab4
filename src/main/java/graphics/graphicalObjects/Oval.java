@@ -45,11 +45,19 @@ public class Oval extends AbstractGraphicalObject {
 
     @Override
     public double selectionDistance(Point mousePoint) {
-        Rectangle rec = getBoundingBox();
-        Point recCenterPoint = new Point(rec.getX() + rec.getWidth() / 2, rec.getY() + rec.getHeight() / 2);
-        Point difference = recCenterPoint.difference(mousePoint);
+        Point bottomPoint = getHotPoint(0);
+        Point rightPoint = getHotPoint(1);
 
-        return Math.sqrt(Math.pow(difference.getX(), 2) + Math.pow(difference.getY(), 2));
+        Point centerPoint = new Point(bottomPoint.getX(), rightPoint.getY());
+        int coefA = rightPoint.getX() - centerPoint.getX();
+        int coefB = bottomPoint.getY() - centerPoint.getY();
+
+        double fracA = Math.pow(mousePoint.getX() - centerPoint.getX(), 2) / Math.pow(coefA, 2);
+        double fracB = Math.pow(mousePoint.getY() - centerPoint.getY(), 2) / Math.pow(coefB, 2);
+
+        double result = fracA + fracB;
+
+        return result <= 1 ? 0.0 : result;
     }
 
     @Override
