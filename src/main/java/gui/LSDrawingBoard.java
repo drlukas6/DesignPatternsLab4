@@ -9,11 +9,13 @@ import graphics.graphicalObjects.abstracts.GraphicalObject;
 import graphics.listeners.DocumentModelListener;
 import graphics.renderer.G2DRendererImpl;
 import graphics.renderer.Renderer;
+import graphics.renderer.SVGRendererImpl;
 import state.*;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 
 public class LSDrawingBoard extends JFrame implements DocumentModelListener {
     private DocumentModel documentModel;
@@ -44,6 +46,12 @@ public class LSDrawingBoard extends JFrame implements DocumentModelListener {
         JButton loadButton = new JButton("Load");
         JButton saveButton = new JButton("Save");
         JButton svgExportButton = new JButton("Export SVG");
+        svgExportButton.addActionListener(l -> {
+            state.onLeaving();
+            showSaveDialog();
+            this.requestFocus();
+        });
+
         JButton lineButton = new JButton("Line");
         lineButton.addActionListener(l -> {
             state.onLeaving();
@@ -66,9 +74,9 @@ public class LSDrawingBoard extends JFrame implements DocumentModelListener {
         });
 
         JButton eraserButton = new JButton("Eraser");
-        selectButton.addActionListener(l -> {
+        eraserButton.addActionListener(l -> {
             state.onLeaving();
-            this.state = new EraserState(documentModel);
+            this.state = new EraserState(documentModel, new G2DRendererImpl((Graphics2D) getGraphics()));
             this.requestFocus();
         });
 
@@ -90,8 +98,8 @@ public class LSDrawingBoard extends JFrame implements DocumentModelListener {
 
     @Override
     public void paint(Graphics g) {
-
         super.paint(g);
+
         Renderer renderer = new G2DRendererImpl((Graphics2D) g);
 
         for (GraphicalObject object : documentModel.list()) {
@@ -170,4 +178,26 @@ public class LSDrawingBoard extends JFrame implements DocumentModelListener {
         }
     }
 
+    private void showSaveDialog() {
+
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Specify a file to save");
+
+        int userSelection = fileChooser.showSaveDialog(this);
+        String location = "";
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = fileChooser.getSelectedFile();
+            location = fileToSave.getAbsolutePath();
+        } else {
+            return;
+        }
+
+        SVGRendererImpl svgRenderer = new SVGRendererImpl(location, getWidth(), getHeight());
+
+        for(GraphicalObject object: documentModel.list()) {
+            object.render(svgRenderer);
+        }
+
+        svgRenderer.close();
+    }
 }

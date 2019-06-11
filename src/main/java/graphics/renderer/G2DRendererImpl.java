@@ -5,6 +5,7 @@ import graphics.Rectangle;
 
 import java.awt.*;
 import java.util.Arrays;
+import java.util.List;
 
 public class G2DRendererImpl implements Renderer {
     private Graphics2D g2d;
@@ -43,5 +44,14 @@ public class G2DRendererImpl implements Renderer {
         g2d.setColor(Color.BLACK);
 
         g2d.drawRect(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight());
+    }
+
+    @Override
+    public void drawPoints(List<Point> points) {
+        g2d.setColor(Color.RED);
+
+        for(Point point: points) {
+            g2d.drawLine(point.getX(), point.getY(), point.getX(), point.getY());
+        }
     }
 }

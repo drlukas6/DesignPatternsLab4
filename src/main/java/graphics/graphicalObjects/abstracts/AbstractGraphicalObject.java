@@ -4,6 +4,7 @@ import graphics.Point;
 import graphics.listeners.GraphicalObjectListener;
 import graphics.utils.GeometryUtil;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -85,5 +86,18 @@ public abstract class AbstractGraphicalObject implements GraphicalObject {
 
     public Point[] getHotPoints() {
         return hotPoints;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AbstractGraphicalObject that = (AbstractGraphicalObject) o;
+        return Arrays.equals(hotPoints, that.hotPoints);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(hotPoints);
     }
 }
