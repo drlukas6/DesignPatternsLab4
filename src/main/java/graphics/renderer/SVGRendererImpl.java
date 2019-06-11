@@ -3,6 +3,11 @@ package graphics.renderer;
 import graphics.Point;
 import graphics.Rectangle;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,8 +16,11 @@ public class SVGRendererImpl implements Renderer {
     private String filename;
 
     public SVGRendererImpl(String filename, int width, int height) {
+        if (!filename.endsWith(".svg")) {
+            filename += ".svg";
+        }
         this.filename = filename;
-        String start = String.format("<svg height=\"%d\" width=\"%d\">", width, height);
+        String start = String.format("<svg height=\"%d\" width=\"%d\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">", width, height);
         lines.add(start);
     }
 
@@ -23,6 +31,8 @@ public class SVGRendererImpl implements Renderer {
         for(String line: lines) {
             System.out.println(line);
         }
+
+        writeLinesToFile();
     }
 
     @Override
@@ -46,7 +56,7 @@ public class SVGRendererImpl implements Renderer {
 
         String description = String.format(
                 "\t<ellipse cx=\"%d\" cy=\"%d\" rx=\"%d\" ry=\"%d\" style=\"fill:blue;stroke:red;stroke-width:2\" />",
-                center.getX(), center.getY(), coefA * 2, coefB * 2);
+                center.getX(), center.getY(), coefA, coefB);
         lines.add(description);
     }
 
@@ -57,6 +67,16 @@ public class SVGRendererImpl implements Renderer {
 
     @Override
     public void drawPoints(List<Point> points) {
+
+    }
+
+    private void writeLinesToFile() {
+        Path file = Paths.get(filename);
+        try {
+            Files.write(file, lines, StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
 
     }
 }
