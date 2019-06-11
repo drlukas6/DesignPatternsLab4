@@ -9,10 +9,7 @@ import graphics.graphicalObjects.abstracts.GraphicalObject;
 import graphics.listeners.DocumentModelListener;
 import graphics.renderer.G2DRendererImpl;
 import graphics.renderer.Renderer;
-import state.AddShapeState;
-import state.IdleState;
-import state.SelectShapeState;
-import state.State;
+import state.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -69,6 +66,11 @@ public class LSDrawingBoard extends JFrame implements DocumentModelListener {
         });
 
         JButton eraserButton = new JButton("Eraser");
+        selectButton.addActionListener(l -> {
+            state.onLeaving();
+            this.state = new EraserState(documentModel);
+            this.requestFocus();
+        });
 
         toolBar.add(loadButton);
         toolBar.add(saveButton);

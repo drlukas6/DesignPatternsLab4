@@ -39,14 +39,13 @@ public class DocumentModel {
 
         @Override
         public void graphicalObjectSelectionChanged(GraphicalObject go) {
-            objects.remove(go);
             selectedObjects.remove(go);
 
             if (go.isSelected()) {
                 selectedObjects.add(go);
-            } else {
-                objects.add(go);
             }
+
+            notifyListeners();
         }
     };
 
@@ -76,11 +75,6 @@ public class DocumentModel {
             selectedObjects.add(obj);
         }
 
-//        if(!obj.isSelected()) {
-//            objects.add(obj);
-//        } else {
-//            selectedObjects.add(obj);
-//        }
 
         notifyListeners();
     }
@@ -208,7 +202,6 @@ public class DocumentModel {
         while (selectedObjects.size() > 0) {
             GraphicalObject object = selectedObjects.remove(0);
             object.setSelected(false);
-            objects.add(object);
         }
 
         notifyListeners();

@@ -5,11 +5,9 @@ import graphics.Rectangle;
 import graphics.graphicalObjects.abstracts.AbstractGraphicalObject;
 import graphics.graphicalObjects.abstracts.GraphicalObject;
 import graphics.renderer.Renderer;
+import graphics.utils.GeometryUtil;
 
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 public class CompositeObject extends AbstractGraphicalObject {
     private List<GraphicalObject> objects;
@@ -49,7 +47,23 @@ public class CompositeObject extends AbstractGraphicalObject {
 
     @Override
     public double selectionDistance(Point mousePoint) {
-        return 0;
+        Rectangle rect = getBoundingBox();
+
+        Point A = new Point(rect.getX(), rect.getY());
+        Point B = new Point(rect.getX() + rect.getWidth(), rect.getY());
+        Point C = new Point(rect.getX() + rect.getWidth(), rect.getY() + rect.getHeight());
+        Point D = new Point(rect.getX(), rect.getY() + rect.getHeight());
+
+
+        double ABDist = GeometryUtil.distanceFromLineSegment(A, B, mousePoint);
+        double ADDist = GeometryUtil.distanceFromLineSegment(A, D, mousePoint);
+        double CBDist = GeometryUtil.distanceFromLineSegment(C, B, mousePoint);
+        double CDDist = GeometryUtil.distanceFromLineSegment(C, D, mousePoint);
+
+        List<Double> dists = Arrays.asList(ABDist, ADDist, CBDist, CDDist);
+        dists.sort(Double::compareTo);
+
+        return dists.get(0) < 0.0 ? 0.0 : dists.get(0) ;
     }
 
     @Override
@@ -97,6 +111,10 @@ public class CompositeObject extends AbstractGraphicalObject {
     public void setSelected(boolean selected) {
         super.setSelected(selected);
 
-        objects.forEach(o -> o.setSelected(selected));
+        objects.forEach(o -> o.setSelected(false));
+    }
+
+    public List<GraphicalObject> getObjects() {
+        return objects;
     }
 }

@@ -5,6 +5,7 @@ import graphics.drawing.DocumentModel;
 import graphics.graphicalObjects.CompositeObject;
 import graphics.graphicalObjects.abstracts.GraphicalObject;
 import graphics.renderer.Renderer;
+import graphics.utils.GeometryUtil;
 import javafx.scene.input.KeyCode;
 
 import java.awt.event.KeyEvent;
@@ -32,13 +33,11 @@ public class SelectShapeState implements State{
             return;
         }
 
-        object.setSelected(true);
-
         if (!ctrlDown) {
             documentModel.clearSelectedObjects();
         }
 
-        documentModel.addGraphicalObject(object);
+        object.setSelected(true);
     }
 
 
@@ -104,6 +103,32 @@ public class SelectShapeState implements State{
                 GraphicalObject composite = new CompositeObject(selectedObjects);
                 composite.setSelected(true);
                 documentModel.addGraphicalObject(composite);
+
+                documentModel.notifyListeners();
+
+                return;
+            case KeyEvent.VK_U:
+                if (documentModel.getSelectedObjects().size() == 0 || documentModel.getSelectedObjects().size() > 1) {
+                    return;
+                }
+
+                GraphicalObject obj = documentModel.getSelectedObjects().get(0);
+
+                if (!(obj.getClass() == CompositeObject.class)) {
+                    return;
+                }
+
+                CompositeObject compObj = (CompositeObject) obj;
+
+                List<GraphicalObject> compositedObjects = compObj.getObjects();
+
+                documentModel.removeGraphicalObject(compObj);
+
+
+                for(GraphicalObject gObj: compositedObjects) {
+                    gObj.setSelected(true);
+                    documentModel.addGraphicalObject(gObj);
+                }
 
                 documentModel.notifyListeners();
 

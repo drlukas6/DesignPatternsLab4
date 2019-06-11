@@ -25,6 +25,7 @@ public abstract class AbstractGraphicalObject implements GraphicalObject {
 
     public void setSelected(boolean selected) {
         this.selected = selected;
+        notifySelectionListeners();
     }
 
     public int getNumberOfHotPoints() {
