@@ -1,6 +1,6 @@
 package gui;
 
-import com.sun.tools.internal.xjc.ModelLoader;
+import factories.GraphicalObjectFactory;
 import graphics.Point;
 import graphics.drawing.DocumentModel;
 import graphics.graphicalObjects.LineSegment;
@@ -10,12 +10,22 @@ import graphics.listeners.DocumentModelListener;
 import graphics.renderer.G2DRendererImpl;
 import graphics.renderer.Renderer;
 import graphics.renderer.SVGRendererImpl;
+import jdk.nashorn.internal.runtime.ECMAException;
 import state.*;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Stack;
+import java.util.stream.Stream;
 
 public class LSDrawingBoard extends JFrame implements DocumentModelListener {
     private DocumentModel documentModel;
@@ -36,19 +46,26 @@ public class LSDrawingBoard extends JFrame implements DocumentModelListener {
         this.addKeyListener(new LSDrawingBoardKeyListener());
 
         this.setFocusable(true);
-
-
     }
 
     private void setupMenubar() {
         JToolBar toolBar = new JToolBar("Tool bar");
 
         JButton loadButton = new JButton("Load");
+        loadButton.addActionListener(l -> {
+            showLoadDialog();
+            this.requestFocus();
+        });
+
         JButton saveButton = new JButton("Save");
+        saveButton.addActionListener(l -> {
+            showSaveDialog();
+            this.requestFocus();
+        });
+
         JButton svgExportButton = new JButton("Export SVG");
         svgExportButton.addActionListener(l -> {
-            state.onLeaving();
-            showSaveDialog();
+            showSVGExportDialog();
             this.requestFocus();
         });
 
@@ -178,10 +195,10 @@ public class LSDrawingBoard extends JFrame implements DocumentModelListener {
         }
     }
 
-    private void showSaveDialog() {
+    private void showSVGExportDialog() {
 
         JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("Specify a file to save");
+        fileChooser.setDialogTitle("Specify a file to export SVG to");
 
         int userSelection = fileChooser.showSaveDialog(this);
         String location = "";
@@ -199,5 +216,79 @@ public class LSDrawingBoard extends JFrame implements DocumentModelListener {
         }
 
         svgRenderer.close();
+    }
+
+    private void showSaveDialog() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Specify a file to save to");
+
+        int userSelection = fileChooser.showSaveDialog(this);
+        String location = "";
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = fileChooser.getSelectedFile();
+            location = fileToSave.getAbsolutePath();
+        } else {
+            return;
+        }
+
+        writeLinesToFile(location);
+    }
+
+    private void showLoadDialog() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Specify a file to load drawing from");
+
+        int userSelection = fileChooser.showSaveDialog(this);
+
+        String filename;
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File chosenFile = fileChooser.getSelectedFile();
+            filename = chosenFile.getAbsolutePath();
+        } else {
+            return;
+        }
+
+        loadLinesFromFile(filename);
+    }
+
+    private void loadLinesFromFile(String filename) {
+        Stack<GraphicalObject> objects = new Stack<>();
+
+        try {
+            Stream<String> lines = Files.lines(Paths.get(filename), Charset.defaultCharset());
+            lines.forEach(l -> {
+                GraphicalObjectFactory.instance.graphicalObjectWithDescription(objects, l);
+            });
+
+            System.out.println("Loading done!");
+
+            documentModel.clear();
+
+            while (!objects.empty()) {
+                documentModel.addGraphicalObject(objects.pop());
+            }
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void writeLinesToFile(String filename) {
+        Path file = Paths.get(filename);
+
+        if (!filename.endsWith(".lsd")) {
+            filename += ".lsd";
+        }
+
+        List<String> objectDescriptions = new LinkedList<>();
+        for (GraphicalObject object: documentModel.list()) {
+            object.save(objectDescriptions);
+        }
+        try {
+            Files.write(file, objectDescriptions, StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
+
     }
 }

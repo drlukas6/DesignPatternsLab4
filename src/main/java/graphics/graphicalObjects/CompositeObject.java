@@ -98,13 +98,32 @@ public class CompositeObject extends AbstractGraphicalObject {
     }
 
     @Override
-    public void load(Stack<GraphicalObject> stack, String data) {
+    public GraphicalObject load(Stack<GraphicalObject> stack, String data) {
+        String[] elements = data.split(" ");
 
+        if (elements.length != 1) {
+            return null;
+        }
+
+        int numberOfElements = Integer.parseInt(elements[0]);
+        List<GraphicalObject> objects = new LinkedList<>();
+
+        for(int i = 0; i < numberOfElements; ++i) {
+            objects.add(stack.pop());
+        }
+
+        GraphicalObject comp = new CompositeObject(objects);
+
+        stack.push(comp);
+        return comp;
     }
 
     @Override
     public void save(List<String> rows) {
-
+        for (GraphicalObject object: objects) {
+            object.save(rows);
+        }
+        rows.add(getShapeName() + " " + objects.size());
     }
 
     @Override

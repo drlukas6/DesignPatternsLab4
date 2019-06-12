@@ -5,8 +5,8 @@ import graphics.Rectangle;
 import graphics.renderer.Renderer;
 import graphics.graphicalObjects.abstracts.AbstractGraphicalObject;
 import graphics.graphicalObjects.abstracts.GraphicalObject;
-import org.w3c.dom.css.Rect;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 
@@ -84,13 +84,26 @@ public class Oval extends AbstractGraphicalObject {
     }
 
     @Override
-    public void load(Stack<GraphicalObject> stack, String data) {
+    public GraphicalObject load(Stack<GraphicalObject> stack, String data) {
+        String[] elements = data.split(" ");
 
+        if (elements.length != 4) {
+            return null;
+        }
+
+        int[] parsedElements = Arrays.stream(elements).mapToInt(Integer::valueOf).toArray();
+        GraphicalObject createdObject = new Oval(parsedElements[0], parsedElements[1], parsedElements[2], parsedElements[3]);
+
+        stack.push(createdObject);
+        return createdObject;
     }
 
     @Override
     public void save(List<String> rows) {
-
+        Point bottomPoint = getHotPoint(0);
+        Point rightPoint = getHotPoint(1);
+        String objectDescription = getShapeName() + " " + bottomPoint.getX() + " " + bottomPoint.getY() + " " + rightPoint.getX() + " " + rightPoint.getY();
+        rows.add(objectDescription);
     }
 
     @Override

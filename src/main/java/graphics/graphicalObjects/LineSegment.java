@@ -7,6 +7,7 @@ import graphics.graphicalObjects.abstracts.AbstractGraphicalObject;
 import graphics.graphicalObjects.abstracts.GraphicalObject;
 import graphics.utils.GeometryUtil;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 
@@ -73,13 +74,26 @@ public class LineSegment extends AbstractGraphicalObject {
     }
 
     @Override
-    public void load(Stack<GraphicalObject> stack, String data) {
+    public GraphicalObject load(Stack<GraphicalObject> stack, String data) {
+        String[] elements = data.split(" ");
 
+        if (elements.length != 4) {
+            return null;
+        }
+
+        int[] parsedElements = Arrays.stream(elements).mapToInt(Integer::valueOf).toArray();
+        GraphicalObject createdObject = new LineSegment(parsedElements[0], parsedElements[1], parsedElements[2], parsedElements[3]);
+
+        stack.push(createdObject);
+        return createdObject;
     }
 
     @Override
     public void save(List<String> rows) {
-
+        Point startPoint = getHotPoint(0);
+        Point endPoint = getHotPoint(1);
+        String objectDescription = getShapeName() + " " + startPoint.getX() + " " + startPoint.getY() + " " + endPoint.getX() + " " + endPoint.getY();
+        rows.add(objectDescription);
     }
 
     @Override
