@@ -238,7 +238,7 @@ public class LSDrawingBoard extends JFrame implements DocumentModelListener {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Specify a file to load drawing from");
 
-        int userSelection = fileChooser.showSaveDialog(this);
+        int userSelection = fileChooser.showOpenDialog(this);
 
         String filename;
         if (userSelection == JFileChooser.APPROVE_OPTION) {

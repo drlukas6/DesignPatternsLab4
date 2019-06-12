@@ -28,10 +28,7 @@ public class GraphicalObjectFactory {
             data.append(splitDescription[i]).append(" ");
         }
 
-        System.out.println("DATA: " + description);
         String points = data.substring(0, data.length() - 1);
-
-        System.out.println("PTS: " + points);
 
         String objectType = splitDescription[0];
 
