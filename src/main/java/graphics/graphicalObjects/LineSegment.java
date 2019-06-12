@@ -13,14 +13,21 @@ import java.util.Stack;
 public class LineSegment extends AbstractGraphicalObject {
 
     private static int lineCount = 1;
+    private int instanceId;
 
 
     public LineSegment(Point startPoint, Point endPoint) {
         super(new Point[] {startPoint, endPoint});
+        this.instanceId = lineCount++;
     }
 
     public LineSegment() {
         super(new Point[] {new Point(0, 0 ), new Point(10, 0)});
+        this.instanceId = lineCount++;
+    }
+
+    public LineSegment(int xs, int ys, int xe, int ye) {
+        this(new Point(xs, ys), new Point(xe, ye));
     }
 
     @Override

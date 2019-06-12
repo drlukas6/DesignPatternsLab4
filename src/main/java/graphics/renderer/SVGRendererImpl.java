@@ -3,7 +3,6 @@ package graphics.renderer;
 import graphics.Point;
 import graphics.Rectangle;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;

@@ -13,12 +13,20 @@ import java.util.Stack;
 public class Oval extends AbstractGraphicalObject {
     private static int ovalCount = 1;
 
+    private int instanceId;
+
     public Oval(Point startPoint, Point endPoint) {
         super(new Point[] {startPoint, endPoint});
+        this.instanceId = ovalCount++;
     }
 
     public Oval() {
         super(new Point[] {new Point(20, 0 ), new Point(0, 20)});
+        this.instanceId = ovalCount++;
+    }
+
+    public Oval(int xb, int yb, int xr, int yr) {
+        this(new Point(xb, yb), new Point(xr, yr));
     }
 
     @Override
@@ -72,7 +80,7 @@ public class Oval extends AbstractGraphicalObject {
 
     @Override
     public String getShapeID() {
-        return "Oval " + ovalCount++;
+        return "Oval " + instanceId;
     }
 
     @Override
